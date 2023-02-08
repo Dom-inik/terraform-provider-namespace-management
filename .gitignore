@@ -27,3 +27,6 @@ terraform.tfstate.backup
 .terraform.tfstate.swp
 
 *~
+
+# go mod vendor
+vendor/
