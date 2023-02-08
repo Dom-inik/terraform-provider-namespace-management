@@ -412,39 +412,28 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
-	// ns := m.(*namespace.Manager)
-	// clusterList, err := ns.ListClusters(ctx)
-	// if err != nil {
-	// 	return diag.FromErr(err)
-	// }
+	ns := m.(*namespace.Manager)
+	clusterList, err := ns.ListClusters(ctx)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	found := false
-	name := "unknown"
-	// name := d.Get("name").(string)
+	clusterId := d.Get("cluster_id").(string)
 
-	// // Now search for our (d.Id()) matching cluster
-	// for _, cluster := range clusterList {
-	// 	if cluster.Name == name {
-	// 		found = true
-	// 		d.SetId(cluster.ID)
-	// 		if err := d.Set("id", cluster.ID); err != nil {
-	// 			return diag.FromErr(err)
-	// 		}
-	// 		if err := d.Set("kubernetes_status", cluster.KubernetesStatus); err != nil {
-	// 			return diag.FromErr(err)
-	// 		}
-	// 		if err := d.Set("config_status", cluster.ConfigStatus); err != nil {
-	// 			return diag.FromErr(err)
-	// 		}
-	// 		// TODO all detail fields here too
-	// 	}
-	// }
+	// Now search for our cluster_id matching cluster
+	for _, cluster := range clusterList {
+		if cluster.ID == d.Get("cluster_id").(string) {
+			found = true
+			d.SetId(cluster.ID)
+		}
+	}
 	// Handle cluster not found error
 	if !found {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Unable to read Tanzu Supervisor Cluster",
-			Detail:   "Cluster name not found: " + name,
+			Detail:   "Cluster id not found: " + clusterId,
 		})
 	}
 
@@ -455,8 +444,8 @@ func flattenCluster(cluster namespace.ClusterSummary) map[string]interface{} {
 	c := make(map[string]interface{})
 	c["id"] = cluster.ID
 	c["name"] = cluster.Name
-	c["kubernetes_status"] = cluster.KubernetesStatus
-	c["config_status"] = cluster.ConfigStatus
+	c["kubernetes_status"] = cluster.KubernetesStatus.String()
+	c["config_status"] = cluster.ConfigStatus.String()
 
 	return c
 }
