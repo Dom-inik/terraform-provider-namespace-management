@@ -468,6 +468,14 @@ func resourceClusterUpdate(ctx context.Context, d *schema.ResourceData, m interf
 func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
+	ns := m.(*namespace.Manager)
+
+	clusterId := d.Get("cluster_id").(string)
+
+	err := ns.DisableCluster(ctx, clusterId)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	return diags
 }
