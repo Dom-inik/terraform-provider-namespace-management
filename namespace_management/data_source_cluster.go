@@ -57,10 +57,10 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interf
 			if err := d.Set("id", cluster.ID); err != nil {
 				return diag.FromErr(err)
 			}
-			if err := d.Set("kubernetes_status", cluster.KubernetesStatus); err != nil {
+			if err := d.Set("kubernetes_status", cluster.KubernetesStatus.String()); err != nil {
 				return diag.FromErr(err)
 			}
-			if err := d.Set("config_status", cluster.ConfigStatus); err != nil {
+			if err := d.Set("config_status", cluster.ConfigStatus.String()); err != nil {
 				return diag.FromErr(err)
 			}
 		}

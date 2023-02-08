@@ -61,8 +61,8 @@ func dataSourceClustersRead(ctx context.Context, d *schema.ResourceData, m inter
 		cl := make(map[string]interface{})
 		cl["id"] = cluster.ID
 		cl["name"] = cluster.Name
-		cl["kubernetes_status"] = cluster.KubernetesStatus
-		cl["config_status"] = cluster.ConfigStatus
+		cl["kubernetes_status"] = cluster.KubernetesStatus.String()
+		cl["config_status"] = cluster.ConfigStatus.String()
 
 		clusters = append(clusters, cl)
 	}
